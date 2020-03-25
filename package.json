@@ -6,8 +6,9 @@
   "scripts": {
     "start": "run-p watch-compile watch-web",
     "watch-compile": "webpack --watch",
+    "build": "webpack --mode production",
     "watch-web": "live-server --watch=www/ --mount=/:www",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "repository": {
     "type": "git",
