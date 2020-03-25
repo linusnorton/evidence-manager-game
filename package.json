@@ -1,0 +1,34 @@
+{
+  "name": "evidence-manager-game",
+  "version": "1.0.0",
+  "description": "Evidence Manager - Distributing Justice",
+  "main": "index.js",
+  "scripts": {
+    "start": "run-p watch-compile watch-web",
+    "watch-compile": "webpack --watch",
+    "watch-web": "live-server --watch=www/ --mount=/:www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/linusnorton/evidence-manager-game.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Linus Norton <linusnorton@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linusnorton/evidence-manager-game/issues"
+  },
+  "homepage": "https://github.com/linusnorton/evidence-manager-game#readme",
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "npm-run-all": "^4.1.5",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {}
+}
