@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "moduleResolution": "classic",
+    "moduleResolution": "Node",
     "module": "none",
     "target": "esnext",
     "sourceMap": false,
