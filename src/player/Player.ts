@@ -4,7 +4,7 @@ export const playerSprite = {
   name: "justine",
   spriteSheet: {
     image: "image/sprite/justine.png",
-    frames: { frameWidth: 99, frameHeight: 99 },
+    frames: { frameWidth: 96, frameHeight: 96 },
   },
   animations: {
     walkSideways: {
