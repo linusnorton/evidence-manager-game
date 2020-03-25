@@ -1,8 +1,8 @@
-import * as Phaser from "phaser";
 import { MainScene } from "./scene/MainScene";
+import { Game, Types } from "phaser";
 
-const gameConfig: Phaser.Types.Core.GameConfig = {
-  title: "Sample",
+const gameConfig: Types.Core.GameConfig = {
+  title: "Evidence Manager - Distributing Justice",
   parent: "game",
   backgroundColor: "#000000",
   type: Phaser.AUTO,
@@ -13,10 +13,10 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: "arcade",
     arcade: {
-      debug: true,
+      debug: false,
     },
   },
   scene: [MainScene]
 };
 
-export const game = new Phaser.Game(gameConfig);
+export const game = new Game(gameConfig);
