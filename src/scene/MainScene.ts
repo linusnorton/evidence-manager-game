@@ -22,8 +22,6 @@ export class MainScene extends Scene {
     walls.setCollisionByProperty({ collides: true });
 
     const playerSprite = this.physics.add.sprite(100, 450, playerConfig.name, 51);
-    playerSprite.body.setSize(40, 40);
-    playerSprite.body.setOffset(15, 60);
     this.player = new Player(playerSprite);
 
     for (const [name, animation] of Object.entries(playerConfig.animations)) {
@@ -35,8 +33,17 @@ export class MainScene extends Scene {
       });
     }
 
+    map.createStaticLayer("Above", tileset, 0, 0);
+
     this.physics.add.collider(playerSprite, walls);
+    playerSprite.setCollideWorldBounds(true);
+
+    this.cameras.main.startFollow(playerSprite, true, 0.05, 0.05);
     this.enableCollisionMap(walls);
+
+    this.cameras.main.setBounds(0, 0, floor.width, floor.height);
+    this.physics.world.setBounds(0, 0, floor.width, floor.height);
+
   }
 
   private enableCollisionMap(walls: Tilemaps.StaticTilemapLayer) {

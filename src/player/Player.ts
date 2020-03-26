@@ -40,32 +40,37 @@ export class Player {
 
   constructor(
     private readonly sprite: Physics.Arcade.Sprite
-  ) { }
+  ) {
+    sprite.body.setSize(40, 40);
+    sprite.body.setOffset(15, 60);
+  }
 
   public update(cursors: Cursors) {
-    this.sprite.body.velocity.x = 0;
-    this.sprite.body.velocity.y = 0;
-
+    const speed = cursors.shift.isDown ? this.SPEED * 2 : this.SPEED;
+    const animationRate = cursors.shift.isDown ? 20 : 10;
     const possibleAnimations = [] as string[];
 
+    this.sprite.setVelocity(0);
+    this.sprite.anims.frameRate = animationRate;
+
     if (cursors.left.isDown) {
-      this.sprite.body.velocity.x = -this.SPEED;
+      this.sprite.setVelocityX(-speed);
       possibleAnimations.push("walkLeft");
     }
     if (cursors.right.isDown) {
-      this.sprite.body.velocity.x = this.SPEED;
+      this.sprite.setVelocityX(speed);
       possibleAnimations.push("walkRight");
     }
     if (cursors.down.isDown) {
-      this.sprite.body.velocity.y = this.SPEED;
+      this.sprite.setVelocityY(speed);
       possibleAnimations.push("walkDown");
     }
     if (cursors.up.isDown) {
-      this.sprite.body.velocity.y = -this.SPEED;
+      this.sprite.setVelocityY(-speed);
       possibleAnimations.push("walkUp");
     }
 
-    this.sprite.body.velocity.normalize().scale(this.SPEED);
+    this.sprite.body.velocity.normalize().scale(speed);
 
     if (possibleAnimations.length === 0) {
       this.sprite.anims.stop();
