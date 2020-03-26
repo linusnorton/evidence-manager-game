@@ -41,8 +41,8 @@ export class Player {
   constructor(
     private readonly sprite: Physics.Arcade.Sprite
   ) {
-    sprite.body.setSize(40, 40);
-    sprite.body.setOffset(15, 60);
+    sprite.body.setSize(40, 45);
+    sprite.body.setOffset(15, 55);
   }
 
   public update(cursors: Cursors) {
