@@ -1,6 +1,7 @@
 import { Cursors } from "../scene/MainScene";
+import { Physics } from "phaser";
 
-export const playerSprite = {
+export const playerConfig = {
   name: "justine",
   spriteSheet: {
     image: "image/sprite/characters.png",
@@ -35,30 +36,36 @@ export const playerSprite = {
 };
 
 export class Player {
+  private readonly SPEED = 200;
 
   constructor(
-    private readonly sprite: Phaser.GameObjects.Sprite
+    private readonly sprite: Physics.Arcade.Sprite
   ) { }
 
   public update(cursors: Cursors) {
+    this.sprite.body.velocity.x = 0;
+    this.sprite.body.velocity.y = 0;
+
     const possibleAnimations = [] as string[];
 
     if (cursors.left.isDown) {
-      this.sprite.x -= 2;
+      this.sprite.body.velocity.x = -this.SPEED;
       possibleAnimations.push("walkLeft");
     }
     if (cursors.right.isDown) {
-      this.sprite.x += 2;
+      this.sprite.body.velocity.x = this.SPEED;
       possibleAnimations.push("walkRight");
     }
     if (cursors.down.isDown) {
-      this.sprite.y += 2;
+      this.sprite.body.velocity.y = this.SPEED;
       possibleAnimations.push("walkDown");
     }
     if (cursors.up.isDown) {
-      this.sprite.y -= 2;
+      this.sprite.body.velocity.y = -this.SPEED;
       possibleAnimations.push("walkUp");
     }
+
+    this.sprite.body.velocity.normalize().scale(this.SPEED);
 
     if (possibleAnimations.length === 0) {
       this.sprite.anims.stop();

@@ -1,34 +1,51 @@
-import { Scene, Physics, Types } from "phaser";
-import { Player, playerSprite } from "../player/Player";
+import { Scene, Physics, Types, Tilemaps } from "phaser";
+import { Player, playerConfig } from "../player/Player";
 
 export class MainScene extends Scene {
   private player?: Player;
 
   public preload() {
-    this.load.image("backgroundTiles", "image/background/mainlevbuild.png");
+    this.load.image("backgroundTiles", "image/background/mainlevbuild2x.png");
     this.load.tilemapTiledJSON("backgroundMap", "map/main.json");
     this.load.spritesheet(
-      playerSprite.name,
-      playerSprite.spriteSheet.image,
-      playerSprite.spriteSheet.frames
+      playerConfig.name,
+      playerConfig.spriteSheet.image,
+      playerConfig.spriteSheet.frames
     );
   }
 
   public create() {
     const map = this.make.tilemap({ key: "backgroundMap" });
-    const tileset = map.addTilesetImage("mainlevbuild", "backgroundTiles");
+    const tileset = map.addTilesetImage("mainlevbuild2x", "backgroundTiles");
     const floor = map.createStaticLayer("Floor", tileset, 0, 0);
     const walls = map.createStaticLayer("Walls", tileset, 0, 0);
     walls.setCollisionByProperty({ collides: true });
 
-    this.player = new Player(this.physics.add.sprite(100, 450, playerSprite.name, 51));
+    const playerSprite = this.physics.add.sprite(100, 450, playerConfig.name, 51);
+    playerSprite.body.setSize(40, 40);
+    playerSprite.body.setOffset(15, 60);
+    this.player = new Player(playerSprite);
 
-    for (const [name, animation] of Object.entries(playerSprite.animations)) {
+    for (const [name, animation] of Object.entries(playerConfig.animations)) {
       this.anims.create({
         key: name,
-        frames: this.anims.generateFrameNumbers(playerSprite.name, animation),
+        frames: this.anims.generateFrameNumbers(playerConfig.name, animation),
         frameRate: animation.rate,
         repeat: animation.repeat
+      });
+    }
+
+    this.physics.add.collider(playerSprite, walls);
+    this.enableCollisionMap(walls);
+  }
+
+  private enableCollisionMap(walls: Tilemaps.StaticTilemapLayer) {
+    if (this.game.config.physics.arcade!.debug) {
+      const debugGraphics = this.add.graphics().setAlpha(0.75);
+      walls.renderDebug(debugGraphics, {
+        tileColor: null, // Color of non-colliding tiles
+        collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+        faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
       });
     }
   }
