@@ -13,7 +13,7 @@ export class MainScene extends Scene {
   }
 
   public create() {
-    this.player = new Player(this.physics.add.sprite(100, 450, playerSprite.name));
+    this.player = new Player(this.physics.add.sprite(100, 450, playerSprite.name, 51));
 
     for (const [name, animation] of Object.entries(playerSprite.animations)) {
       this.anims.create({
