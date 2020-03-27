@@ -1,4 +1,3 @@
-import { Cursors } from "../scene/MainScene";
 import { Physics } from "phaser";
 import { InputState } from "../input/InputState";
 
@@ -36,14 +35,25 @@ export const playerConfig = {
   }
 };
 
+export const weaponConfig = {
+  name: "justine-hammer",
+  spriteSheet: {
+    image: "image/sprite/hammer.png",
+    frames: { frameWidth: 32, frameHeight: 48 },
+  },
+  animations: {}
+};
+
 export class Player {
   private readonly SPEED = 200;
 
   constructor(
-    private readonly sprite: Physics.Arcade.Sprite
+    private readonly character: Physics.Arcade.Sprite,
+    private readonly weapon: Physics.Arcade.Image
   ) {
-    sprite.body.setSize(40, 45);
-    sprite.body.setOffset(15, 55);
+    character.setCollideWorldBounds(true);
+    character.body.setSize(40, 45);
+    character.body.setOffset(15, 55);
   }
 
   public update(input: InputState) {
@@ -51,41 +61,47 @@ export class Player {
     const animationRate = input.run ? 20 : 10;
     const possibleAnimations = [] as string[];
 
-    this.sprite.setVelocity(0);
-    this.sprite.anims.frameRate = animationRate;
+    this.character.setVelocity(0);
+    this.character.anims.frameRate = animationRate;
+    this.character.depth = 1;
+    this.weapon.depth = 2;
 
     if (input.left) {
-      this.sprite.setVelocityX(speed * input.left);
+      this.weapon.depth = 0;
+      this.character.setVelocityX(speed * input.left);
       possibleAnimations.push("walkLeft");
     }
     if (input.right) {
-      this.sprite.setVelocityX(speed * input.right);
+      this.character.setVelocityX(speed * input.right);
       possibleAnimations.push("walkRight");
     }
     if (input.down) {
-      this.sprite.setVelocityY(speed * input.down);
+      this.character.setVelocityY(speed * input.down);
       possibleAnimations.push("walkDown");
     }
     if (input.up) {
-      this.sprite.setVelocityY(speed * input.up);
+      this.character.setVelocityY(speed * input.up);
       possibleAnimations.push("walkUp");
     }
 
-    this.sprite.body.velocity.normalize().scale(speed);
+    this.character.body.velocity.normalize().scale(speed);
 
     if (possibleAnimations.length === 0) {
-      this.sprite.anims.stop();
+      this.character.anims.stop();
     }
     else {
-      const currentAnimation = this.sprite.anims.getCurrentKey();
+      const currentAnimation = this.character.anims.getCurrentKey();
 
       if (possibleAnimations.includes(currentAnimation)) {
-        this.sprite.anims.play(currentAnimation, true);
+        this.character.anims.play(currentAnimation, true);
       }
       else {
-        this.sprite.anims.play(possibleAnimations[0], true);
+        this.character.anims.play(possibleAnimations[0], true);
       }
     }
+
+    this.weapon.x = this.character.x;
+    this.weapon.y = this.character.y - 10;
   }
 
 }
