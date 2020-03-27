@@ -1,8 +1,13 @@
-import { Scene, Physics, Types, Tilemaps } from "phaser";
+import { Scene, Tilemaps, Types } from "phaser";
 import { Player, playerConfig } from "../player/Player";
+import { ControllerInput } from "../input/ControllerInput";
+import { KeyboardInput } from "../input/KeyboardInput";
 
 export class MainScene extends Scene {
+  private readonly keyboardInput = new KeyboardInput();
+  private readonly controllerInput = new ControllerInput();
   private player?: Player;
+  private cursors?: Cursors;
 
   public preload() {
     this.load.image("backgroundTiles", "image/background/mainlevbuild2x.png");
@@ -43,7 +48,7 @@ export class MainScene extends Scene {
 
     this.cameras.main.setBounds(0, 0, floor.width, floor.height);
     this.physics.world.setBounds(0, 0, floor.width, floor.height);
-
+    this.cursors = this.input.keyboard.createCursorKeys() as Cursors;
   }
 
   private enableCollisionMap(walls: Tilemaps.StaticTilemapLayer) {
@@ -58,12 +63,15 @@ export class MainScene extends Scene {
   }
 
   public update() {
-    const cursors = this.input.keyboard.createCursorKeys() as Cursors;
-
-    if (this.player) {
-      this.player.update(cursors);
+    if (!this.player || !this.cursors) {
+      return;
     }
 
+    const input = this.input.gamepad.pad1
+      ? this.controllerInput.getState(this.input.gamepad.pad1)
+      : this.keyboardInput.getState(this.cursors);
+
+    this.player.update(input);
   }
 }
 

@@ -1,5 +1,6 @@
 import { Cursors } from "../scene/MainScene";
 import { Physics } from "phaser";
+import { InputState } from "../input/InputState";
 
 export const playerConfig = {
   name: "justine",
@@ -45,28 +46,28 @@ export class Player {
     sprite.body.setOffset(15, 55);
   }
 
-  public update(cursors: Cursors) {
-    const speed = cursors.shift.isDown ? this.SPEED * 2 : this.SPEED;
-    const animationRate = cursors.shift.isDown ? 20 : 10;
+  public update(input: InputState) {
+    const speed = input.run ? this.SPEED * 2 : this.SPEED;
+    const animationRate = input.run ? 20 : 10;
     const possibleAnimations = [] as string[];
 
     this.sprite.setVelocity(0);
     this.sprite.anims.frameRate = animationRate;
 
-    if (cursors.left.isDown) {
-      this.sprite.setVelocityX(-speed);
+    if (input.left) {
+      this.sprite.setVelocityX(speed * input.left);
       possibleAnimations.push("walkLeft");
     }
-    if (cursors.right.isDown) {
-      this.sprite.setVelocityX(speed);
+    if (input.right) {
+      this.sprite.setVelocityX(speed * input.right);
       possibleAnimations.push("walkRight");
     }
-    if (cursors.down.isDown) {
-      this.sprite.setVelocityY(speed);
+    if (input.down) {
+      this.sprite.setVelocityY(speed * input.down);
       possibleAnimations.push("walkDown");
     }
-    if (cursors.up.isDown) {
-      this.sprite.setVelocityY(-speed);
+    if (input.up) {
+      this.sprite.setVelocityY(speed * input.up);
       possibleAnimations.push("walkUp");
     }
 

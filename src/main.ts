@@ -17,7 +17,8 @@ const gameConfig: Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [MainScene]
+  scene: [MainScene],
+  input: { gamepad: true }
 };
 
 export const game = new Game(gameConfig);
