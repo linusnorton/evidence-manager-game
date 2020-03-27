@@ -63,8 +63,8 @@ export class Player {
 
     this.character.setVelocity(0);
     this.character.anims.frameRate = animationRate;
-    this.character.depth = 1;
-    this.weapon.depth = 2;
+    this.character.depth = 0.1;
+    this.weapon.depth = 0.2;
 
     if (input.left) {
       this.weapon.depth = 0;

@@ -44,7 +44,8 @@ export class MainScene extends Scene {
       });
     }
 
-    map.createStaticLayer("Above", tileset, 0, 0);
+    const above = map.createStaticLayer("Above", tileset, 0, 0);
+    above.depth = 1;
 
     this.physics.add.collider(playerSprite, walls);
     this.enableCollisionMap(walls);
