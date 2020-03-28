@@ -1,4 +1,4 @@
-import { Scene, Tilemaps, Types } from "phaser";
+import { GameObjects, Physics, Scene, Tilemaps, Types } from "phaser";
 import { Player, playerConfig, weaponConfig } from "../player/Player";
 import { ControllerInput } from "../input/ControllerInput";
 import { KeyboardInput } from "../input/KeyboardInput";
@@ -31,29 +31,38 @@ export class MainScene extends Scene {
     const walls = map.createStaticLayer("Walls", tileset, 0, 0);
     walls.setCollisionByProperty({ collides: true });
 
-    const playerSprite = this.physics.add.sprite(100, 450, playerConfig.name, 51);
-    const weaponSprite = this.physics.add.sprite(100, 450, weaponConfig.name, 0);
-    this.player = new Player(playerSprite, weaponSprite);
+    const playerSprite = this.loadSprite(playerConfig);
+    const weaponSprite = this.loadSprite(weaponConfig);
+    const playerContainer = this.add.container(100, 450, [playerSprite, weaponSprite]) as ContainerWithBody;
 
-    for (const [name, animation] of Object.entries(playerConfig.animations)) {
+    this.physics.add.existing(playerContainer);
+    this.player = new Player(playerSprite, weaponSprite, playerContainer);
+
+    const above = map.createStaticLayer("Above", tileset, 0, 0);
+    above.depth = 2;
+
+    this.physics.add.collider(playerContainer, walls);
+    this.enableCollisionMap(walls);
+
+    this.cameras.main.startFollow(playerContainer, true, 0.05, 0.05);
+    this.cameras.main.setBounds(0, 0, floor.width, floor.height);
+    this.physics.world.setBounds(0, 0, floor.width, floor.height);
+    this.cursors = this.input.keyboard.createCursorKeys() as Cursors;
+  }
+
+  private loadSprite(configuration: SpriteConfiguration): Physics.Arcade.Sprite {
+    const sprite = this.physics.add.sprite(0, 0, configuration.name, configuration.idleTile);
+
+    for (const [name, animation] of Object.entries(configuration.animations)) {
       this.anims.create({
         key: name,
-        frames: this.anims.generateFrameNumbers(playerConfig.name, animation),
+        frames: this.anims.generateFrameNumbers(configuration.name, animation),
         frameRate: animation.rate,
         repeat: animation.repeat
       });
     }
 
-    const above = map.createStaticLayer("Above", tileset, 0, 0);
-    above.depth = 1;
-
-    this.physics.add.collider(playerSprite, walls);
-    this.enableCollisionMap(walls);
-
-    this.cameras.main.startFollow(playerSprite, true, 0.05, 0.05);
-    this.cameras.main.setBounds(0, 0, floor.width, floor.height);
-    this.physics.world.setBounds(0, 0, floor.width, floor.height);
-    this.cursors = this.input.keyboard.createCursorKeys() as Cursors;
+    return sprite;
   }
 
   private enableCollisionMap(walls: Tilemaps.StaticTilemapLayer) {
@@ -82,3 +91,27 @@ export class MainScene extends Scene {
 
 export type Complete<T extends object> = { [K in keyof T]-?: T[K]; };
 export type Cursors = Complete<Types.Input.Keyboard.CursorKeys>;
+
+export interface ContainerWithBody extends GameObjects.Container {
+  body: Physics.Arcade.Body
+}
+
+export interface SpriteConfiguration {
+  name: string,
+  spriteSheet: {
+    image: string,
+    frames: {
+      frameWidth: number,
+      frameHeight: number
+    },
+  },
+  idleTile: number,
+  animations: Record<string, AnimationConfiguration>
+}
+
+export interface AnimationConfiguration {
+  start: number,
+  end: number,
+  rate: number,
+  repeat: number
+}
