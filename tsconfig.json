@@ -9,8 +9,7 @@
     "strict": true,
     "declaration": false,
     "lib": [
-      "esnext",
-      "dom"
+      "esnext"
     ]
   },
   "exclude": [

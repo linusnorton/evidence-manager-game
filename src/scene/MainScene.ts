@@ -70,7 +70,7 @@ export class MainScene extends Scene {
     this.enableCollisionMap(mid1);
 
     const mid2 = map.createStaticLayer("Mid2", tileset2, 0, 0);
-    mid1.setCollisionByProperty({ collides: true });
+    mid2.setCollisionByProperty({ collides: true });
     this.physics.add.collider(playerContainer, mid2);
     this.enableCollisionMap(mid2);
 

@@ -56,6 +56,7 @@ export class Player {
     private readonly container: ContainerWithBody
 ) {
     character.setPosition(20, -12);
+    weapon.setPosition(6, -10);
     container.depth = 1;
     container.body.setCollideWorldBounds(true);
     container.body.setSize(40, 35);
@@ -68,11 +69,8 @@ export class Player {
 
     this.container.body.setVelocity(0);
     this.character.anims.frameRate = animationRate;
-    this.character.depth = 0.1;
-    this.weapon.depth = 0.2;
 
     if (input.left) {
-      this.weapon.depth = 0;
       this.container.body.setVelocityX(speed * input.left);
       possibleAnimations.push("walkLeft");
     }
@@ -101,6 +99,23 @@ export class Player {
         this.character.anims.play(currentAnimation, true);
       }
       else {
+        if (possibleAnimations[0] === "walkLeft"){
+          this.weapon.setPosition(10, -10);
+          this.container.sendToBack(this.weapon);
+        }
+        else if (possibleAnimations[0] === "walkUp") {
+          this.weapon.setPosition(30, -10);
+          this.container.sendToBack(this.weapon);
+        }
+        else if (possibleAnimations[0] === "walkRight") {
+          this.weapon.setPosition(25, -10);
+          this.container.sendToBack(this.character);
+        }
+        else if (possibleAnimations[0] === "walkDown") {
+          this.weapon.setPosition(6, -10);
+          this.container.sendToBack(this.character);
+        }
+
         this.character.anims.play(possibleAnimations[0], true);
       }
     }
