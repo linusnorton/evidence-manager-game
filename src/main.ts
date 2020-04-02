@@ -1,6 +1,8 @@
 import { MainScene } from "./scene/MainScene";
 import { Game, Types } from "phaser";
 
+declare var window;
+
 const gameConfig: Types.Core.GameConfig = {
   title: "Evidence Manager - Distributing Justice",
   parent: "game",
