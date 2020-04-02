@@ -26,20 +26,7 @@ export class MainScene extends Scene {
   }
 
   public create() {
-    const map = this.make.tilemap({ key: "backgroundMap" });
-    const tileset1 = map.addTilesetImage("mainlevbuild2x", "backgroundTiles");
-    const tileset2 = map.addTilesetImage("decorative", "decorativeTiles");
-    const ground1 = map.createStaticLayer("Ground1", tileset1, 0, 0);
-    const ground2 = map.createStaticLayer("Ground2", tileset2, 0, 0);
-    const mid1 = map.createStaticLayer("Mid1", tileset1, 0, 0);
-    mid1.setCollisionByProperty({ collides: true });
-    const mid2 = map.createStaticLayer("Mid2", tileset2, 0, 0);
-    mid1.setCollisionByProperty({ collides: true });
-    const above1 = map.createStaticLayer("Above1", tileset1, 0, 0);
-    above1.depth = 2;
-    const above2 = map.createStaticLayer("Above2", tileset2, 0, 0);
-    above2.depth = 2;
-
+    const collidableTileMaps = this.loadTileMaps();
     const playerSprite = this.loadSprite(playerConfig);
     const weaponSprite = this.loadSprite(weaponConfig);
     const playerContainer = this.add.container(100, 450, [playerSprite, weaponSprite]) as ContainerWithBody;
@@ -47,13 +34,13 @@ export class MainScene extends Scene {
     this.physics.add.existing(playerContainer);
     this.player = new Player(playerSprite, weaponSprite, playerContainer);
 
-    this.physics.add.collider(playerContainer, mid1);
-    this.physics.add.collider(playerContainer, mid2);
-    this.enableCollisionMap(mid2);
+    for (const map of collidableTileMaps) {
+      this.physics.add.collider(playerContainer, map);
+    }
 
     this.cameras.main.startFollow(playerContainer, true, 0.05, 0.05);
-    this.cameras.main.setBounds(0, 0, ground1.width, ground1.height);
-    this.physics.world.setBounds(0, 0, ground1.width, ground1.height);
+    this.cameras.main.setBounds(0, 0, collidableTileMaps[0].width, collidableTileMaps[0].height);
+    this.physics.world.setBounds(0, 0, collidableTileMaps[0].width, collidableTileMaps[0].height);
     this.cursors = this.input.keyboard.createCursorKeys() as Cursors;
   }
 
@@ -70,6 +57,30 @@ export class MainScene extends Scene {
     }
 
     return sprite;
+  }
+
+  private loadTileMaps(): Tilemaps.StaticTilemapLayer[] {
+    const map = this.make.tilemap({ key: "backgroundMap" });
+    const tileset1 = map.addTilesetImage("mainlevbuild2x", "backgroundTiles");
+    const tileset2 = map.addTilesetImage("decorative", "decorativeTiles");
+
+    map.createStaticLayer("Ground1", tileset1, 0, 0);
+    map.createStaticLayer("Ground2", tileset2, 0, 0);
+
+    const mid1 = map.createStaticLayer("Mid1", tileset1, 0, 0);
+    mid1.setCollisionByProperty({ collides: true });
+    this.enableCollisionMap(mid1);
+
+    const mid2 = map.createStaticLayer("Mid2", tileset2, 0, 0);
+    mid1.setCollisionByProperty({ collides: true });
+    this.enableCollisionMap(mid2);
+
+    const above1 = map.createStaticLayer("Above1", tileset1, 0, 0);
+    above1.depth = 2;
+    const above2 = map.createStaticLayer("Above2", tileset2, 0, 0);
+    above2.depth = 2;
+
+    return [mid1, mid2];
   }
 
   private enableCollisionMap(walls: Tilemaps.StaticTilemapLayer) {
