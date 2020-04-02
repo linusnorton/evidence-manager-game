@@ -11,6 +11,7 @@ export class MainScene extends Scene {
 
   public preload() {
     this.load.image("backgroundTiles", "image/background/mainlevbuild2x.png");
+    this.load.image("decorativeTiles", "image/background/decorative2x.png");
     this.load.tilemapTiledJSON("backgroundMap", "map/main.json");
     this.load.spritesheet(
       playerConfig.name,
@@ -26,10 +27,18 @@ export class MainScene extends Scene {
 
   public create() {
     const map = this.make.tilemap({ key: "backgroundMap" });
-    const tileset = map.addTilesetImage("mainlevbuild2x", "backgroundTiles");
-    const floor = map.createStaticLayer("Floor", tileset, 0, 0);
-    const walls = map.createStaticLayer("Walls", tileset, 0, 0);
-    walls.setCollisionByProperty({ collides: true });
+    const tileset1 = map.addTilesetImage("mainlevbuild2x", "backgroundTiles");
+    const tileset2 = map.addTilesetImage("decorative", "decorativeTiles");
+    const ground1 = map.createStaticLayer("Ground1", tileset1, 0, 0);
+    const ground2 = map.createStaticLayer("Ground2", tileset2, 0, 0);
+    const mid1 = map.createStaticLayer("Mid1", tileset1, 0, 0);
+    mid1.setCollisionByProperty({ collides: true });
+    const mid2 = map.createStaticLayer("Mid2", tileset2, 0, 0);
+    mid1.setCollisionByProperty({ collides: true });
+    const above1 = map.createStaticLayer("Above1", tileset1, 0, 0);
+    above1.depth = 2;
+    const above2 = map.createStaticLayer("Above2", tileset2, 0, 0);
+    above2.depth = 2;
 
     const playerSprite = this.loadSprite(playerConfig);
     const weaponSprite = this.loadSprite(weaponConfig);
@@ -38,15 +47,13 @@ export class MainScene extends Scene {
     this.physics.add.existing(playerContainer);
     this.player = new Player(playerSprite, weaponSprite, playerContainer);
 
-    const above = map.createStaticLayer("Above", tileset, 0, 0);
-    above.depth = 2;
-
-    this.physics.add.collider(playerContainer, walls);
-    this.enableCollisionMap(walls);
+    this.physics.add.collider(playerContainer, mid1);
+    this.physics.add.collider(playerContainer, mid2);
+    this.enableCollisionMap(mid2);
 
     this.cameras.main.startFollow(playerContainer, true, 0.05, 0.05);
-    this.cameras.main.setBounds(0, 0, floor.width, floor.height);
-    this.physics.world.setBounds(0, 0, floor.width, floor.height);
+    this.cameras.main.setBounds(0, 0, ground1.width, ground1.height);
+    this.physics.world.setBounds(0, 0, ground1.width, ground1.height);
     this.cursors = this.input.keyboard.createCursorKeys() as Cursors;
   }
 
