@@ -26,7 +26,6 @@ export class MainScene extends Scene {
   }
 
   public create() {
-    const collidableTileMaps = this.loadTileMaps();
     const playerSprite = this.loadSprite(playerConfig);
     const weaponSprite = this.loadSprite(weaponConfig);
     const playerContainer = this.add.container(100, 450, [playerSprite, weaponSprite]) as ContainerWithBody;
@@ -34,13 +33,11 @@ export class MainScene extends Scene {
     this.physics.add.existing(playerContainer);
     this.player = new Player(playerSprite, weaponSprite, playerContainer);
 
-    for (const map of collidableTileMaps) {
-      this.physics.add.collider(playerContainer, map);
-    }
+    const [width, height] = this.loadTileMaps(playerContainer);
 
     this.cameras.main.startFollow(playerContainer, true, 0.05, 0.05);
-    this.cameras.main.setBounds(0, 0, collidableTileMaps[0].width, collidableTileMaps[0].height);
-    this.physics.world.setBounds(0, 0, collidableTileMaps[0].width, collidableTileMaps[0].height);
+    this.cameras.main.setBounds(0, 0, width, height);
+    this.physics.world.setBounds(0, 0, width, height);
     this.cursors = this.input.keyboard.createCursorKeys() as Cursors;
   }
 
@@ -59,7 +56,7 @@ export class MainScene extends Scene {
     return sprite;
   }
 
-  private loadTileMaps(): Tilemaps.StaticTilemapLayer[] {
+  private loadTileMaps(playerContainer: GameObjects.Container): [number, number] {
     const map = this.make.tilemap({ key: "backgroundMap" });
     const tileset1 = map.addTilesetImage("mainlevbuild2x", "backgroundTiles");
     const tileset2 = map.addTilesetImage("decorative", "decorativeTiles");
@@ -69,10 +66,12 @@ export class MainScene extends Scene {
 
     const mid1 = map.createStaticLayer("Mid1", tileset1, 0, 0);
     mid1.setCollisionByProperty({ collides: true });
+    this.physics.add.collider(playerContainer, mid1);
     this.enableCollisionMap(mid1);
 
     const mid2 = map.createStaticLayer("Mid2", tileset2, 0, 0);
     mid1.setCollisionByProperty({ collides: true });
+    this.physics.add.collider(playerContainer, mid2);
     this.enableCollisionMap(mid2);
 
     const above1 = map.createStaticLayer("Above1", tileset1, 0, 0);
@@ -80,7 +79,7 @@ export class MainScene extends Scene {
     const above2 = map.createStaticLayer("Above2", tileset2, 0, 0);
     above2.depth = 2;
 
-    return [mid1, mid2];
+    return [mid1.width, mid2.height];
   }
 
   private enableCollisionMap(walls: Tilemaps.StaticTilemapLayer) {

@@ -56,6 +56,7 @@ export class Player {
     private readonly container: ContainerWithBody
 ) {
     character.setPosition(20, -12);
+    container.depth = 1;
     container.body.setCollideWorldBounds(true);
     container.body.setSize(40, 35);
   }
